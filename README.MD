@@ -331,3 +331,7 @@ dependencies {
 
 4. 启动新activity的约束：启动外部activity不受限制，启动apk内部的activity有限制，首先由于apk中的activity没注册，所以不支持隐式调用，其次必须通过BaseActivity中定义的新方法startActivityByProxy和startActivityForResultByProxy，还有就是不支持LaunchMode。
 5. 目前暂不支持Service、BroadcastReceiver等需要注册才能使用的组件。
+
+
+
+Thankd for your reading, by Mc...
