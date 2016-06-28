@@ -85,7 +85,6 @@ public class DLProxyActivity extends Activity implements DLAttachable {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        super.onKeyDown(keyCode, event);
         return mRemoteActivity.onKeyDown(keyCode, event);
     }
 
