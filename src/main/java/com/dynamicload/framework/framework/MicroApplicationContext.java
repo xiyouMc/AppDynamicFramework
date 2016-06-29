@@ -5,8 +5,8 @@ import com.dynamicload.framework.dynamicload.internal.DLIntent;
 import com.dynamicload.framework.dynamicload.internal.DLPluginManager;
 import com.dynamicload.framework.dynamicload.internal.DLPluginPackage;
 import com.dynamicload.framework.dynamicload.utils.DLUtils;
-import com.quvideo.xiaoying.framework.service.ServiceDescription;
-import com.quvideo.xiaoying.framework.util.FrameworkUtil;
+import com.dynamicload.framework.service.ServiceDescription;
+import com.dynamicload.framework.util.FrameworkUtil;
 
 import android.app.Activity;
 import android.content.Context;

@@ -19,7 +19,7 @@
 package com.dynamicload.framework;
 
 
-import com.quvideo.xiaoying.framework.dynamicload.DLPlugin;
+import com.dynamicload.framework.dynamicload.DLPlugin;
 import com.dynamicload.framework.dynamicload.internal.DLIntent;
 import com.dynamicload.framework.dynamicload.internal.DLPluginManager;
 import com.dynamicload.framework.dynamicload.internal.DLPluginPackage;

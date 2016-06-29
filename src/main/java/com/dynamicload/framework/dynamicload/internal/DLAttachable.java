@@ -19,7 +19,7 @@
 package com.dynamicload.framework.dynamicload.internal;
 
 
-import com.quvideo.xiaoying.framework.dynamicload.DLPlugin;
+import com.dynamicload.framework.dynamicload.DLPlugin;
 
 public interface DLAttachable {
     /**

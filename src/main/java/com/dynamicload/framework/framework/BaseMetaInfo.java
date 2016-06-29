@@ -1,7 +1,7 @@
 package com.dynamicload.framework.framework;
 
 
-import com.quvideo.xiaoying.framework.service.ServiceDescription;
+import com.dynamicload.framework.service.ServiceDescription;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -21,9 +21,9 @@ package com.dynamicload.framework.dynamicload.internal;
 import com.dynamicload.framework.BasePluginActivity;
 import com.dynamicload.framework.BasePluginFragmentActivity;
 import com.dynamicload.framework.BasePluginService;
-import com.quvideo.xiaoying.framework.dynamicload.DLProxyActivity;
-import com.quvideo.xiaoying.framework.dynamicload.DLProxyFragmentActivity;
-import com.quvideo.xiaoying.framework.dynamicload.DLProxyService;
+import com.dynamicload.framework.dynamicload.DLProxyActivity;
+import com.dynamicload.framework.dynamicload.DLProxyFragmentActivity;
+import com.dynamicload.framework.dynamicload.DLProxyService;
 import com.dynamicload.framework.dynamicload.utils.DLConstants;
 import com.dynamicload.framework.dynamicload.utils.SoLibManager;
 

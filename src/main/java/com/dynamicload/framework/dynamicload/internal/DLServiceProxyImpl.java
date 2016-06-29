@@ -1,7 +1,7 @@
 package com.dynamicload.framework.dynamicload.internal;
 
 
-import com.quvideo.xiaoying.framework.dynamicload.DLServicePlugin;
+import com.dynamicload.framework.dynamicload.DLServicePlugin;
 import com.dynamicload.framework.dynamicload.utils.DLConfigs;
 import com.dynamicload.framework.dynamicload.utils.DLConstants;
 
