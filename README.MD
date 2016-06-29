@@ -1,3 +1,5 @@
+本框架是建立在 [Dynamic-load-apk](https://github.com/singwhatiwanna/dynamic-load-apk)进行的上层封装。增加插件动态加载到libs目录和针对模块Service的注入。
+
 # 插件化框架简介
 * 插件化是将Apk中功能类似的模块封装到独立的Application中，并根据框架约定好的规则完成Apk的动态加载和Service的注入。
 * 本框架是将每一个Apk作为so并使用定制化打包脚本将so文件打到主Project/libs/jniLibs，这样在apk编译的时候就可以将so文件直接装载进data/data/xxxxx/lib目录，支持后续的DexClassLoader加载该文件。

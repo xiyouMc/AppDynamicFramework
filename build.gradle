@@ -22,7 +22,7 @@ apply plugin: 'signing'
 
 //定义GroupID和Version，ArtefactID会自动使用Project名
 group = 'com.quvideo.xiaoying'
-version = '3.0.160620'
+version = '4.0.16062901'
 
 artifacts {
     archives file('build/libs/' + project.name + '.jar')
@@ -76,7 +76,7 @@ task buildJar(type: Jar) {
 
     appendix = project.name
     baseName = project.name
-    version = "3.0.160620"
+    version = "4.0.16062901"
     classifier = "release"
 
     //后缀名
@@ -92,12 +92,12 @@ task buildJar(type: Jar) {
     //去除路径集下部分的资源
 //    exclude "org/chaos/demo/jar/MainActivity.class"
 //    exclude "org/chaos/demo/jar/MainActivity\$*.class"
-    exclude "com/quvideo/xiaoying/framework/BuildConfig.class"
-    exclude "com/quvideo/xiaoying/framework/BuildConfig\$*.class"
+    exclude "com/dynamicload/framework/BuildConfig.class"
+    exclude "com/dynamicload/framework/BuildConfig\$*.class"
     exclude "**/R.class"
     exclude "**/R\$*.class"
     //只导入资源路径集下的部分资源
-    include "com/quvideo/xiaoying/framework/**/*.class"
+    include "com/dynamicload/framework/**/*.class"
 
     //注: exclude include 支持可变长参数
 }

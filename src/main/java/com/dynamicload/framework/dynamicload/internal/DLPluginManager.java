@@ -399,7 +399,7 @@ public class DLPluginManager {
     private String getPluginActivityFullPath(DLIntent dlIntent, DLPluginPackage pluginPackage) {
         String className = dlIntent.getPluginClass();
         className = (className == null ? pluginPackage.defaultActivity : className);
-        if (className.startsWith("")) {
+        if (className.startsWith(".")) {
             className = dlIntent.getPluginPackage() + className;
         }
         return className;
