@@ -1,5 +1,7 @@
 package com.dynamicload.framework.framework;
 
+import com.dynamicload.framework.framework.api.MicroApplicationContext;
+
 /**
  * Created by android_mc on 16/5/4.
  */
@@ -7,7 +9,7 @@ public class VivaApplication {
 
     private static VivaApplication mVivaApplication;
 
-    private static MicroApplicationContext microApplicationContext;
+    private static MicroApplicationContext mMicroApplicationContext;
 
     private VivaApplication() {
     }
@@ -24,9 +26,9 @@ public class VivaApplication {
     }
 
     public synchronized MicroApplicationContext getMicroApplicationContext() {
-        if (microApplicationContext == null) {
-            microApplicationContext = new MicroApplicationContext();
+        if (mMicroApplicationContext == null) {
+            mMicroApplicationContext = new MicroApplicationContextImpl();
         }
-        return microApplicationContext;
+        return mMicroApplicationContext;
     }
 }

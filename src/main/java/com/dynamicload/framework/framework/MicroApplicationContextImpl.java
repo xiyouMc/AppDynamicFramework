@@ -5,6 +5,7 @@ import com.dynamicload.framework.dynamicload.internal.DLIntent;
 import com.dynamicload.framework.dynamicload.internal.DLPluginManager;
 import com.dynamicload.framework.dynamicload.internal.DLPluginPackage;
 import com.dynamicload.framework.dynamicload.utils.DLUtils;
+import com.dynamicload.framework.framework.api.MicroApplicationContext;
 import com.dynamicload.framework.service.ServiceDescription;
 import com.dynamicload.framework.util.FrameworkUtil;
 
@@ -24,7 +25,7 @@ import dalvik.system.DexClassLoader;
 /**
  * Created by android_mc on 16/5/4.
  */
-public class MicroApplicationContext {
+public class MicroApplicationContextImpl implements MicroApplicationContext {
 
     private static String TAG = "MicroApplicationContext";
 

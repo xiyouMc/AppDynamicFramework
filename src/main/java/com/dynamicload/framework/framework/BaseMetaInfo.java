@@ -11,6 +11,9 @@ import java.util.List;
  */
 public abstract class BaseMetaInfo {
 
+    /**
+     * All Bundle`s service.
+     */
     public static List<ServiceDescription> services;
 
     {
