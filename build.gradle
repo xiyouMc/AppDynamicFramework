@@ -11,8 +11,9 @@ android {
 
     buildTypes {
         release {
+            debuggable false
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
@@ -21,7 +22,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 //定义GroupID和Version，ArtefactID会自动使用Project名
-group = 'com.quvideo.xiaoying'
+group = 'com.dynamicload.framework'
 version = '4.0.16062901'
 
 artifacts {

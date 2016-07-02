@@ -15,3 +15,21 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+-keep class  com.dunamicload.framework.BasePluginActivity
+-keep class  com.dunamicload.framework.BasePluginFragmentActivity
+-keep class  com.dunamicload.framework.BasePluginService
+-keep class com.dynamicload.framework.dynamicload.internal.DLIntent**{
+ public <fields>;
+   public <methods>;
+}
+-keepattributes *Annotation*
+-keep class  com.dunamicload.framework.util**{
+     public <fields>;
+     public <methods>;
+}
+
+-keep class com.dunamicload.framework.framework**{
+   public <fields>;
+   public <methods>;
+}
