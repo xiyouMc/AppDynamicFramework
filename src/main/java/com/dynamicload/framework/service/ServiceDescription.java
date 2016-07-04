@@ -11,6 +11,16 @@ public class ServiceDescription {
 
     private String bundleName = "";
 
+    private boolean lazy = false;
+
+    public boolean isLazy() {
+        return lazy;
+    }
+
+    public void lazy(boolean lazy) {
+        this.lazy = lazy;
+    }
+
     public String getBundleName() {
         return bundleName;
     }

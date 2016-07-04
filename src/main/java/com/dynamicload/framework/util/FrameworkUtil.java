@@ -2,11 +2,11 @@ package com.dynamicload.framework.util;
 
 import com.dynamicload.framework.dynamicload.internal.DLPluginManager;
 import com.dynamicload.framework.dynamicload.internal.DLPluginPackage;
+import com.dynamicload.framework.framework.model.Bundle;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.os.Environment;
-import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.File;
@@ -32,7 +32,7 @@ public class FrameworkUtil {
 
     private static final String PROJECT_NAME = "vivavideo";
     //key: H5Core(Module Name)  value: data/data/xxxxx/lib/libh5core.so
-    public static Map<String, String> soPathMap = new HashMap<String, String>();
+    public static Map<String, Bundle> soPathMap = new HashMap<String, Bundle>();
 
     private static Context context;
 
@@ -46,7 +46,14 @@ public class FrameworkUtil {
 
     public static void prepare() {
         prepareSoMap();
-        loadDexAndService();
+        //loadDex  without lazy
+
+        for (Map.Entry<String, Bundle> entry : FrameworkUtil.soPathMap.entrySet()) {
+            Bundle bundle = entry.getValue();
+            if (!bundle.isLazy) {
+                loadDexAndService(bundle.bundleName, bundle.soPath);
+            }
+        }
     }
 
     private static void replaceSoToApk(String soPath, String apkPath) {
@@ -110,111 +117,64 @@ public class FrameworkUtil {
             InputStream is = context.getApplicationContext().getAssets().open("bundlelist.properties");
             pro.load(is);
             String bundleList = pro.getProperty("bundleName");
-            if (bundleList != null) {
-                String[] soNameList = bundleList.split(",");
-                //load metainfo ,执行对应构造函数
-                String dataPath = context.getFilesDir().getParent();
-                Log.d("Launcher", dataPath);
-                String lib = dataPath + "/lib/lib";
 
-                for (String soname : soNameList) {
-                    soPathMap.put("lib" + soname, lib + soname + ".so");
+            //not lazy list
+            if (bundleList != null && !bundleList.isEmpty()) {
+                String[] bundleNameList = bundleList.split(",");
+                for (String bundleName : bundleNameList) {
+                    Bundle bundle = new Bundle.Builder().bundleName(bundleName).lazy(false).serviceName("")
+                            .soPath(context.getFilesDir().getParent() + "/lib/lib" + bundleName + ".so").build();
+                    soPathMap.put(bundleName, bundle);
                 }
-
+            }
+            String lazyList = pro.getProperty("lazyBundle");
+            //lazy bundle
+            if (lazyList != null && !lazyList.isEmpty()) {
+                String[] lazyArrays = lazyList.split(",");
+                for (int index = 0; index < lazyArrays.length; index++) {
+                    String[] lazyBundle = lazyArrays[index].split("\\.");
+                    Bundle bundle = new Bundle.Builder().bundleName(lazyBundle[0]).lazy(true).serviceName(lazyBundle[1])
+                            .soPath(context.getFilesDir().getParent() + "/lib/lib" + lazyBundle[0] + ".so").build();
+                    soPathMap.put(lazyBundle[0], bundle);
+                }
             }
         } catch (IOException e) {
             Log.e("Util", "loadBundle Exception", e);
         }
     }
 
-    public static boolean delete(String absPath) {
-        if (TextUtils.isEmpty(absPath)) {
-            return false;
-        }
-
-        File file = new File(absPath);
-        return delete(file);
-    }
-
-    public static boolean delete(File file) {
-        if (!exists(file)) {
-            return true;
-        }
-
-        if (file.isFile()) {
-            return file.delete();
-        }
-
-        boolean result = true;
-        File files[] = file.listFiles();
-        for (int index = 0; index < files.length; index++) {
-            result |= delete(files[index]);
-        }
-        result |= file.delete();
-
-        return result;
-    }
-
-    public static boolean exists(String absPath) {
-        if (TextUtils.isEmpty(absPath)) {
-            return false;
-        }
-        File file = new File(absPath);
-        return exists(file);
-    }
-
-    public static boolean exists(File file) {
-        if (file == null) {
-            return false;
-        }
-        return file.exists();
-    }
-
-    private static void loadDexAndService() {
+    public static void loadDexAndService(String bundleName, String soPath) {
         //transfer so to temp apk.
-        String apkRootPath = Environment.getExternalStorageDirectory().getPath() + "/" + PROJECT_NAME + "/" + context.getPackageName();
-        for (Map.Entry<String, String> entry : FrameworkUtil.soPathMap.entrySet()) {
-            //转换so为apk,但是产生了额外的文件,后面进行迭代删除
-            apkRootPath = apkRootPath + "/" + entry.getKey() + ".apk";
-            FrameworkUtil.replaceSoToApk(entry.getValue(), apkRootPath);
-//            PluginItem item = new PluginItem();
-//            item.pluginPath = apkRootPath;
-//            item.packageInfo = DLUtils.getPackageInfo(context, item.pluginPath);
-            DLPluginPackage dlPluginPackage = DLPluginManager.getInstance(context).loadApk(apkRootPath);
-            //load Bundle`s service
-//            DexClassLoader classLoader = DLPluginManager.getInstance(this).createDexClassLoader(apkRootPath);
-            DexClassLoader classLoader = dlPluginPackage.classLoader;
-            try {
-                //load class
-                PackageInfo info = dlPluginPackage.packageInfo; //DLUtils.getPackageInfo(context, apkRootPath);
-                Class localClass = classLoader.loadClass(info.packageName + ".MetaInfo");
-                //construct instance
-                Constructor localConstructor = localClass.getConstructor(new Class[]{});
-                //register Bundle`s service.
-                localConstructor.newInstance();
-            } catch (IllegalAccessException e) {
-                Log.e(TAG, "IllegalAccessException ", e);
-            } catch (InstantiationException e) {
-                Log.e(TAG, "InstantiationException ", e);
-            } catch (ClassNotFoundException e) {
-                Log.e(TAG, "ClassNotFoundException ", e);
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            }
+        //转换so为apk,但是产生了额外的文件,后面进行迭代删除
+        long timeStart = System.currentTimeMillis();
+        Log.d(TAG, "loadDex start time:" + timeStart);
+        String apkRootPath = getApkPathByBundleName(bundleName);
+        FrameworkUtil.replaceSoToApk(soPath, apkRootPath);
+        Log.d(TAG, "replaceSoToApk:" + (System.currentTimeMillis() - timeStart));
+        DLPluginPackage dlPluginPackage = DLPluginManager.getInstance(context).loadApk(apkRootPath);
+        Log.d(TAG, "loadApk:" + (System.currentTimeMillis() - timeStart));
+        DexClassLoader classLoader = dlPluginPackage.classLoader;
+        try {
+            //load class
+            PackageInfo info = dlPluginPackage.packageInfo; //DLUtils.getPackageInfo(context, apkRootPath);
+            Class localClass = classLoader.loadClass(info.packageName + ".MetaInfo");
+            //construct instance
+            Constructor localConstructor = localClass.getConstructor(new Class[]{});
+            //register Bundle`s service.
+            localConstructor.newInstance();
+            Log.d(TAG, "newInstance:" + (System.currentTimeMillis() - timeStart));
+        } catch (IllegalAccessException e) {
+            Log.e(TAG, "IllegalAccessException ", e);
+        } catch (InstantiationException e) {
+            Log.e(TAG, "InstantiationException ", e);
+        } catch (ClassNotFoundException e) {
+            Log.e(TAG, "ClassNotFoundException ", e);
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
         }
         //delete Apk
-        for (Map.Entry<String, String> entry : FrameworkUtil.soPathMap.entrySet()) {
-            FrameworkUtil.delete(apkRootPath + "/" + entry.getValue() + ".apk");
-        }
-    }
-
-    private static class PluginItem {
-        public PackageInfo packageInfo;
-        public String pluginPath;
-
-        public PluginItem() {
-        }
+//        FileUtil.delete(apkRootPath);
     }
 }

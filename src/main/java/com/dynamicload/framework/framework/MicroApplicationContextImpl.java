@@ -6,6 +6,7 @@ import com.dynamicload.framework.dynamicload.internal.DLPluginManager;
 import com.dynamicload.framework.dynamicload.internal.DLPluginPackage;
 import com.dynamicload.framework.dynamicload.utils.DLUtils;
 import com.dynamicload.framework.framework.api.MicroApplicationContext;
+import com.dynamicload.framework.framework.model.Bundle;
 import com.dynamicload.framework.service.ServiceDescription;
 import com.dynamicload.framework.util.FrameworkUtil;
 
@@ -19,6 +20,7 @@ import android.util.Log;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 
 import dalvik.system.DexClassLoader;
 
@@ -29,16 +31,32 @@ public class MicroApplicationContextImpl implements MicroApplicationContext {
 
     private static String TAG = "MicroApplicationContext";
 
-
     public <T> T findServiceByInterface(String interfaceName) {
+
         String className = null;
         String bundleName = null;
+        boolean lazy = true;
         for (ServiceDescription serviceDescription : BaseMetaInfo.services) {
             if (interfaceName.equals(serviceDescription.getInterfaceName())) {
                 className = serviceDescription.getClassName();
                 bundleName = serviceDescription.getBundleName();
+                lazy = false;
                 break;
             }
+        }
+        if (lazy) {
+            //load lazy dex
+            for (Map.Entry<String, Bundle> entry : FrameworkUtil.soPathMap.entrySet()) {
+                Bundle bundle = entry.getValue();
+                if (interfaceName.endsWith(bundle.serviceName)) {
+                    FrameworkUtil.loadDexAndService(bundle.bundleName, bundle.soPath);
+                    return findServiceByInterface(interfaceName);
+                }
+            }
+        }
+        if (bundleName == null) {
+            Log.e(TAG, "not init service." + interfaceName);
+            return null;
         }
         String apkRootPath = FrameworkUtil.getApkPathByBundleName(bundleName);
         Log.d(TAG, "apk root path:" + apkRootPath);
@@ -52,7 +70,6 @@ public class MicroApplicationContextImpl implements MicroApplicationContext {
             Class localClass = classLoader.loadClass(className);
             //construct instance
             Constructor localConstructor = localClass.getConstructor();
-
             object = localConstructor.newInstance();
         } catch (IllegalAccessException e) {
             Log.e(TAG, "IllegalAccessException ", e);

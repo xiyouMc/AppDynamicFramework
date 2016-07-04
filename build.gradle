@@ -23,7 +23,7 @@ apply plugin: 'signing'
 
 //定义GroupID和Version，ArtefactID会自动使用Project名
 group = 'com.dynamicload.framework'
-version = '4.0.16074'
+version = '4.1.16074'
 
 artifacts {
     archives file('build/libs/' + project.name + '.jar')
@@ -77,7 +77,7 @@ task buildJar(type: Jar) {
 
     appendix = project.name
     baseName = project.name
-    version = "4.0.16074"
+    version = "4.1.16074"
     classifier = "release"
 
     //后缀名

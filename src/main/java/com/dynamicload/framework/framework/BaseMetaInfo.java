@@ -14,9 +14,5 @@ public abstract class BaseMetaInfo {
     /**
      * All Bundle`s service.
      */
-    public static List<ServiceDescription> services;
-
-    {
-        services = new ArrayList<ServiceDescription>();
-    }
+    public static List<ServiceDescription> services = new ArrayList<ServiceDescription>();
 }
