@@ -45,12 +45,12 @@ public class DLIntent extends Intent {
         return mPluginClass;
     }
 
-    public void setPluginClass(String pluginClass) {
-        this.mPluginClass = pluginClass;
-    }
-
     public void setPluginClass(Class<?> clazz) {
         this.mPluginClass = clazz.getName();
+    }
+
+    public void setPluginClass(String pluginClass) {
+        this.mPluginClass = pluginClass;
     }
 
     @Override
