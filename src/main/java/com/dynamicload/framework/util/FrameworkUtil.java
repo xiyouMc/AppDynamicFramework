@@ -133,7 +133,7 @@ public class FrameworkUtil {
                 String[] lazyArrays = lazyList.split(",");
                 for (int index = 0; index < lazyArrays.length; index++) {
                     String[] lazyBundle = lazyArrays[index].split("\\.");
-                    Bundle bundle = new Bundle.Builder().bundleName(lazyBundle[0]).lazy(true).serviceName(lazyBundle[1])
+                    Bundle bundle = new Bundle.Builder().bundleName(lazyBundle[0]).lazy(true).serviceName(lazyBundle[1].split("&"))
                             .soPath(context.getFilesDir().getParent() + "/lib/lib" + lazyBundle[0] + ".so").build();
                     soPathMap.put(lazyBundle[0], bundle);
                 }

@@ -48,9 +48,13 @@ public class MicroApplicationContextImpl implements MicroApplicationContext {
             //load lazy dex
             for (Map.Entry<String, Bundle> entry : FrameworkUtil.soPathMap.entrySet()) {
                 Bundle bundle = entry.getValue();
-                if (interfaceName.endsWith(bundle.serviceName)) {
-                    FrameworkUtil.loadDexAndService(bundle.bundleName, bundle.soPath);
-                    return findServiceByInterface(interfaceName);
+                if (bundle.serviceName != null){
+                    for (String service : bundle.serviceName) {
+                        if (interfaceName.endsWith(service)) {
+                            FrameworkUtil.loadDexAndService(bundle.bundleName, bundle.soPath);
+                            return findServiceByInterface(interfaceName);
+                        }
+                    }
                 }
             }
         }

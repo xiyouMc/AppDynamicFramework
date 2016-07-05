@@ -7,7 +7,7 @@ public class Bundle {
     public String bundleName;
     public boolean isLazy;
     public String soPath;
-    public String serviceName;
+    public String[] serviceName;
 
     public Bundle(Builder builder) {
         this.bundleName = builder.bundleName;
@@ -20,7 +20,7 @@ public class Bundle {
         private String bundleName = "";
         private boolean isLazy = false;
         private String soPath = "";
-        private String serviceName = "";
+        private String[] serviceName;
 
         public Builder bundleName(String bundleName) {
             this.bundleName = bundleName;
@@ -37,7 +37,7 @@ public class Bundle {
             return this;
         }
 
-        public Builder serviceName(String serviceName) {
+        public Builder serviceName(String... serviceName) {
             this.serviceName = serviceName;
             return this;
         }
