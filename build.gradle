@@ -1,0 +1,114 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion "19.1.0"
+
+    defaultConfig {
+        minSdkVersion 8
+        targetSdkVersion 22
+    }
+
+    buildTypes {
+        release {
+            debuggable false
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+//定义GroupID和Version，ArtefactID会自动使用Project名
+group = 'com.dynamicload.framework'
+version = '4.2.16074'
+
+artifacts {
+    archives file('build/libs/' + project.name + '.jar')
+}
+
+signing {
+    required { has("release") && gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
+uploadArchives {
+    configuration = configurations.archives
+    repositories.mavenDeployer {
+        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+        repository(url: 'http://192.168.1.3:8081/nexus/content/repositories/VivaVideo/') {//仓库地址
+            authentication(userName: "admin",//用户名
+                    password: "admin123")//密码
+        }
+
+        pom.project {
+            name project.name
+            packaging 'jar'
+            description 'none'
+            url 'http://192.168.1.3:8081/nexus/content/repositories/VivaVideo/'//仓库地址
+
+            developers {
+                developer {
+                    id 'mc'
+                    name 'ma machao'
+                    email 'code.mylover@yeah.net'
+                }
+            }
+        }
+    }
+}
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.1.0'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+//dependsOn 可根据实际需要增加或更改 dependsOn: ['compileReleaseJava'],
+task buildJar(type: Jar) {
+
+    appendix = project.name
+    baseName = project.name
+    version = "4.2.16074"
+    classifier = "release"
+
+    //后缀名
+    extension = "jar"
+    //最终的 Jar 包名，如果没设置，默认为 [baseName]-[appendix]-[version]-[classifier].[extension]
+    archiveName = project.name + ".jar"
+
+    //需打包的资源所在的路径集
+    def srcClassDir = [project.buildDir.absolutePath + "/intermediates/classes/release"];
+    //初始化资源路径集
+    from srcClassDir
+
+    //去除路径集下部分的资源
+//    exclude "org/chaos/demo/jar/MainActivity.class"
+//    exclude "org/chaos/demo/jar/MainActivity\$*.class"
+    exclude "com/dynamicload/framework/BuildConfig.class"
+    exclude "com/dynamicload/framework/BuildConfig\$*.class"
+    exclude "**/R.class"
+    exclude "**/R\$*.class"
+    //只导入资源路径集下的部分资源
+    include "com/dynamicload/framework/**/*.class"
+
+    //注: exclude include 支持可变长参数
+}
+
+android {
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    provided fileTree(dir: 'libs', include: ['*.jar'])
+}

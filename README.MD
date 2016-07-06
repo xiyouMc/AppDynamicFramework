@@ -1,8 +1,23 @@
+本框架是建立在 [Dynamic-load-apk](https://github.com/singwhatiwanna/dynamic-load-apk)进行的上层封装。增加插件动态加载到libs目录和针对模块Service的注入。
+
+本文将以H5Core为插件进行讲解。
+
+##### 更新日志：
+>
+* 2016/7/6  commit -m "增加懒加载功能"   hash: 2a335dc49654c80fb6779cacefdf3ed712c23a8
+
+
+
+
 # 插件化框架简介
 * 插件化是将Apk中功能类似的模块封装到独立的Application中，并根据框架约定好的规则完成Apk的动态加载和Service的注入。
 * 本框架是将每一个Apk作为so并使用定制化打包脚本将so文件打到主Project/libs/jniLibs，这样在apk编译的时候就可以将so文件直接装载进data/data/xxxxx/lib目录，支持后续的DexClassLoader加载该文件。
 * 每一个模块分为Api和Core，Api作为模块对外提供的接口，Core作为封装好的独立模块，每一个模块做好自己的混淆。注入操作需在Core中定义，下文将介绍这块。
-
+* 主Client增加bundleList.config文件，文件配置：
+	
+		bundleName=h5core    //直接加载的插件
+		lazyBundle=h5core.H5Service&H5Api //懒加载插件
+ 
 
 ## 一、Framework
 
@@ -10,13 +25,13 @@
 
 ### 简介
 1. 开发模块时需要在  module(core)/package name/下定义Metainfo继承自BaseMateinfo。 这样该模块在主Apk安装的时候就会动态将模块的接口注入到框架，后续提供给其它组件调用。
-2. 模块提供的主要方法类有:BasePluginActivity,BasePluginFragmentActivity,BasePluginService,BaseMateinfo,VivoApplication.
+2. 模块提供的主要方法类有:BasePluginActivity,BasePluginFragmentActivity,BasePluginService,BaseMateinfo,VivaApplication.
 
 		BasePluginActivity: 基础的Activity，每一个模块中的Activity都需要继承该类，完成模块中的Activity的代理化。
 		BasePluginFragmentActivity： 基础的FragmentActivity，同上。需要继承该类
 		BasePluginService: 基础的Service，同上。
 		BaseMateinfo: 模块Service注入的基类，其它模块的Core层都需要定义一个Metainfo来继承该类，并完成Service的注入。（后面会介绍如何注入）
-		VivoApplication:模块的Application，可以拿到模块的Context，并提供查找Service，启动Activity等方法。
+		VivaApplication:模块的Application，可以拿到模块的Context，并提供查找Service，启动Activity等方法。
 
 
 ## 二、Activity层
@@ -32,10 +47,10 @@
 		public class MetaInfo extends BaseMetaInfo {
     	private static final String TAG = "MetaInfo.Init";
     	public MetaInfo() {
-        	H5Log.d(TAG,"H5Service init");
+        	Log.d(TAG,"Service init");
         	ServiceDescription serviceDescription = new ServiceDescription();
-        	serviceDescription.setInterfaceName(H5Service.class.getName());
-        	serviceDescription.setClassName(H5ServiceImpl.class.getName());
+        	serviceDescription.setInterfaceName(XXService.class.getName());
+        	serviceDescription.setClassName(XXServiceImpl.class.getName());
         	services.add(serviceDescription);
     	}
 		}
@@ -45,10 +60,10 @@
    
 ### 模块之间依赖
 * 模块只要是通过Api包的依赖进行访问。由于Api是作为一个Jar存在的，因此可以直接被其它模块依赖，并切记使用 provided来依赖，防止Api的jar包被编译进模块。
-* 模块之间访问：主要的类有VivoApplication、MicroApplicationContext。
+* 模块之间访问：主要的类有VivaApplication、MicroApplicationContext。
 
-		比如其他模块访问H5Core:
-		H5Service h5service = VivoApplication.getInstance().getMicroApplicationContext().findServiceByInterface(H5Service.class.getName());
+		比如其他模块访问Core:
+		XXService xxservice = VivaApplication.getInstance().getMicroApplicationContext().findServiceByInterface(XXService.class.getName());
 		这样就可以拿到容器的Service，从而调用其提供的方法。
   	
 ### 模块内部资源的访问
@@ -56,9 +71,9 @@
 
 		示例：
 		1、Resourse获取
-			VivoApplication.getInstance().getMicroApplicationContext().getResourcesByBundle("android-vivovideo-h5core");  
+			VivaApplication.getInstance().getMicroApplicationContext().getResourcesByBundle("xxcore");  
 		2、Assets获取
-			VivoApplication.getInstance().getMicroApplicationContext().getAssetsByBundle("android-vivovideo-h5core");
+			VivaApplication.getInstance().getMicroApplicationContext().getAssetsByBundle("xxcore");
 			
 			
 			
@@ -78,7 +93,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 //定义GroupID和Version，ArtefactID会自动使用Project名
-group = 'com.vivovideo.mobile'
+group = 'com.xxxx.mobile'
 version = '1.0.1'
 
 android {
@@ -112,7 +127,7 @@ uploadArchives {
     configuration = configurations.archives
     repositories.mavenDeployer {
         beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-        repository(url: 'http://192.168.1.3:8081/nexus/content/repositories/VivoVideo/') {//仓库地址
+        repository(url: 'http://192.168.1.3:8081/nexus/xxxx/') {//仓库地址
             authentication(userName: "admin",//用户名
                     password: "admin123")//密码
         }
@@ -121,7 +136,7 @@ uploadArchives {
             name project.name
             packaging 'jar'
             description 'none'
-            url 'http://192.168.1.3:8081/nexus/content/repositories/VivoVideo/'//仓库地址
+            url 'http://192.168.1.3:8081/nexus/xxxxx/'//仓库地址
 
             developers {
                 developer {
@@ -161,12 +176,12 @@ task buildJar(type: Jar) {
     from srcClassDir
 
     //去除路径集下部分的资源
-    exclude "com/vivovideo/mobile/" + project.name + "/BuildConfig.class"
-    exclude "com/vivovideo/mobile/" + project.name + "/BuildConfig\$*.class"
+    exclude "com/xxxx/" + project.name + "/BuildConfig.class"
+    exclude "com/xxxx/" + project.name + "/BuildConfig\$*.class"
     exclude "**/R.class"
     exclude "**/R\$*.class"
     //只导入资源路径集下的部分资源
-    include "com/vivovideo/mobile/" + project.name + "/**/*.class"
+    include "com/xxxx/" + project.name + "/**/*.class"
 }
 
 //仓库地址
@@ -175,14 +190,14 @@ allprojects {
         mavenCentral()
         //这里加入自己的maven地址
         maven {
-            url "http://192.168.1.3:8081/nexus/content/repositories/VivoVideo/"
+            url "http://192.168.1.3:8081/nexus/xxxxx"
         }
     }
 }
 
 dependencies {
     compile 'com.android.support:support-v4:22.0.0'
-    provided 'com.vivovideo.mobile:framework:1.0' ／／依赖其他模块的jar包
+    provided 'com.xxxx.mobile:framework:1.0' ／／依赖其他模块的jar包
 }
 </code></pre>
 
@@ -194,7 +209,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 //定义GroupID和Version，ArtefactID会自动使用Project名
-group = 'com.vivovideo.mobile'
+group = 'com.xxxx.mobile'
 version = '1.0.1'
 
 android {
@@ -229,7 +244,7 @@ uploadArchives {
     configuration = configurations.archives
     repositories.mavenDeployer {
         beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-        repository(url: 'http://192.168.1.3:8081/nexus/content/repositories/VivoVideo/') {//仓库地址
+        repository(url: 'http://192.168.1.3:8081/nexus/xxxx/') {//仓库地址
             authentication(userName: "admin",//用户名
                     password: "admin123")//密码
         }
@@ -238,7 +253,7 @@ uploadArchives {
             name project.name
             packaging 'jar'
             description '容器内核'
-            url 'http://192.168.1.3:8081/nexus/content/repositories/VivoVideo/'//仓库地址
+            url 'http://192.168.1.3:8081/nexus/xxxxx/'//仓库地址
 
             developers {
                 developer {
@@ -269,12 +284,12 @@ task buildJar(type: Jar) {
     from srcClassDir
 
     //去除路径集下部分的资源
-    exclude "com/vivovideo/mobile/" + project.name + "/BuildConfig.class"
-    exclude "com/vivovideo/mobile/" + project.name + "/BuildConfig\$*.class"
+    exclude "com/xxx/mobile/" + project.name + "/BuildConfig.class"
+    exclude "com/xxx/mobile/" + project.name + "/BuildConfig\$*.class"
     exclude "**/R.class"
     exclude "**/R\$*.class"
     //只导入资源路径集下的部分资源
-    include "com/vivovideo/mobile/" + project.name + "/**/*.class"
+    include "com/xxx/mobile/" + project.name + "/**/*.class"
 }
 
 buildscript {
@@ -291,7 +306,7 @@ allprojects {
         mavenCentral()
         //这里加入自己的maven地址
         maven {
-            url "http://192.168.1.3:8081/nexus/content/repositories/VivoVideo/"
+            url "http://192.168.1.3:8081/nexus/xxxx/"
         }
     }
 }
@@ -299,8 +314,8 @@ allprojects {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:support-v4:22.0.0'
-    provided 'com.vivovideo.mobile:framework:1.0'
-    provided 'com.vivovideo.mobile:h5api:1.0.1'
+    provided 'com.xxx.mobile:framework:1.0'
+    provided 'com.xxx.mobile:xxapi:1.0.1'
 }
 
 </code></pre>
@@ -333,5 +348,17 @@ dependencies {
 5. 目前暂不支持Service、BroadcastReceiver等需要注册才能使用的组件。
 
 
+## 四、更新功能
+* 2016/7/6 懒加载功能
+	
+		1、bundleList.config 文件增加lazyBundle字段来标示是否进行懒加载。字段值格式：bundleName.bundleService*bundleService。这样在该插件被调用的时候，框架采取load这个dex。	
+		2、优化效果：681kb的so，首次启动懒加载优化100ms。
 
-Thankd for your reading, by Mc...
+
+
+
+
+Thankd for your reading, by Mc...    Thanks Dynamic-load-apk
+
+
+update
