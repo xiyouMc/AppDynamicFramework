@@ -1,10 +1,22 @@
 本框架是建立在 [Dynamic-load-apk](https://github.com/singwhatiwanna/dynamic-load-apk)进行的上层封装。增加插件动态加载到libs目录和针对模块Service的注入。
 
+本文将以H5Core为插件进行讲解。
+
+>
+* 2016/7/6  commit -m "增加懒加载功能"   hash: 2a335dc49654c80fb6779cacefdf3ed712c23a8
+
+
+
+
 # 插件化框架简介
 * 插件化是将Apk中功能类似的模块封装到独立的Application中，并根据框架约定好的规则完成Apk的动态加载和Service的注入。
 * 本框架是将每一个Apk作为so并使用定制化打包脚本将so文件打到主Project/libs/jniLibs，这样在apk编译的时候就可以将so文件直接装载进data/data/xxxxx/lib目录，支持后续的DexClassLoader加载该文件。
 * 每一个模块分为Api和Core，Api作为模块对外提供的接口，Core作为封装好的独立模块，每一个模块做好自己的混淆。注入操作需在Core中定义，下文将介绍这块。
-
+* 主Client增加bundleList.config文件，文件配置：
+	
+		bundleName=h5core    //直接加载的插件
+		lazyBundle=h5core.H5Service&H5Api //懒加载插件
+ 
 
 ## 一、Framework
 
@@ -58,9 +70,9 @@
 
 		示例：
 		1、Resourse获取
-			VivaApplication.getInstance().getMicroApplicationContext().getResourcesByBundle("android-xxxxxx-xxcore");  
+			VivaApplication.getInstance().getMicroApplicationContext().getResourcesByBundle("xxcore");  
 		2、Assets获取
-			VivaApplication.getInstance().getMicroApplicationContext().getAssetsByBundle("android-xxxxx-xxcore");
+			VivaApplication.getInstance().getMicroApplicationContext().getAssetsByBundle("xxcore");
 			
 			
 			
@@ -333,6 +345,15 @@ dependencies {
 
 4. 启动新activity的约束：启动外部activity不受限制，启动apk内部的activity有限制，首先由于apk中的activity没注册，所以不支持隐式调用，其次必须通过BaseActivity中定义的新方法startActivityByProxy和startActivityForResultByProxy，还有就是不支持LaunchMode。
 5. 目前暂不支持Service、BroadcastReceiver等需要注册才能使用的组件。
+
+
+## 四、更新功能
+* 2016/7/6 懒加载功能
+	
+		1、bundleList.config 文件增加lazyBundle字段来标示是否进行懒加载。字段值格式：bundleName.bundleService*bundleService。这样在该插件被调用的时候，框架采取load这个dex。	
+		2、优化效果：681kb的so，首次启动懒加载优化100ms。
+
+
 
 
 
