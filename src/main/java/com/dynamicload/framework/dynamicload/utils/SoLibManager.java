@@ -134,6 +134,7 @@ public final class SoLibManager {
                     mSoExecutor.execute(new CopySoTask(context, zipFile, zipEntry, lastModify));
                 }
             }
+            zipFile.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
