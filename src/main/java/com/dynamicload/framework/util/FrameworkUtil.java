@@ -4,7 +4,9 @@ import com.dynamicload.framework.dynamicload.internal.DLPluginManager;
 import com.dynamicload.framework.dynamicload.internal.DLPluginPackage;
 import com.dynamicload.framework.framework.model.Bundle;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.os.Environment;
 import android.util.Log;
@@ -62,13 +64,29 @@ public class FrameworkUtil {
         if (!s.exists()) {
             return;
         }
+        SharedPreferences bundleRecord = getContext().getSharedPreferences("bundle_list",
+                Activity.MODE_PRIVATE);
+        long bundleTime = s.lastModified();
+        String bundleName = soPath.substring(soPath.lastIndexOf("/"));
         File t = new File(apkPath);
-        if (t.exists()) {
+        boolean isOldApk = (bundleRecord.contains(bundleName)
+                && !bundleRecord.getString(bundleName, "").equals(bundleTime + ""))
+                || !bundleRecord.contains(bundleName);
+        if (t.exists() && isOldApk) {
             FileUtil.delete(t);
             Log.d("FrameworkUtil", "delete apk path:" + apkPath);
         }
 
+        if (t.exists()) {
+            return;
+        }
         FileUtil.create(apkPath);
+
+        SharedPreferences.Editor editor = bundleRecord.edit();
+
+        Log.d("FrameworkUtil", " bundleName:" + bundleName + " bundleTime" + bundleTime);
+        editor.putString(bundleName, bundleTime + "");
+        editor.commit();
 
         FileInputStream fi = null;
         FileOutputStream fo = null;
