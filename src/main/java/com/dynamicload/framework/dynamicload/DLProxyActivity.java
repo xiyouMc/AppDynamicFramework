@@ -43,6 +43,9 @@ public class DLProxyActivity extends Activity implements DLAttachable {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (mRemoteActivity == null && savedInstanceState != null && savedInstanceState.containsKey()) {
+            mRemoteActivity = savedInstanceState.getParcelable("mRemoteActivity");
+        }
         impl.onCreate(getIntent());
     }
 
@@ -73,71 +76,123 @@ public class DLProxyActivity extends Activity implements DLAttachable {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (mRemoteActivity == null) {
+            finish();
+            return;
+        }
         mRemoteActivity.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
     protected void onStart() {
+        if (mRemoteActivity == null) {
+            finish();
+            return;
+        }
         mRemoteActivity.onStart();
         super.onStart();
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (mRemoteActivity == null) {
+            finish();
+            return false;
+        }
         return mRemoteActivity.onKeyDown(keyCode, event);
     }
 
     @Override
     protected void onRestart() {
+        if (mRemoteActivity == null) {
+            finish();
+            return;
+        }
         mRemoteActivity.onRestart();
         super.onRestart();
     }
 
     @Override
     protected void onResume() {
+        if (mRemoteActivity == null) {
+            finish();
+            return;
+        }
         mRemoteActivity.onResume();
         super.onResume();
     }
 
     @Override
     protected void onPause() {
+        if (mRemoteActivity == null) {
+            finish();
+            return;
+        }
         mRemoteActivity.onPause();
         super.onPause();
     }
 
     @Override
     protected void onStop() {
+        if (mRemoteActivity == null) {
+            finish();
+            return;
+        }
         mRemoteActivity.onStop();
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
+        if (mRemoteActivity == null) {
+            finish();
+            return;
+        }
         mRemoteActivity.onDestroy();
         super.onDestroy();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        if (mRemoteActivity == null) {
+            finish();
+            return;
+        }
+        outState.putParcelable("mRemoteActivity", mRemoteActivity);
         mRemoteActivity.onSaveInstanceState(outState);
         super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        if (mRemoteActivity == null) {
+            mRemoteActivity = savedInstanceState.getParcelable("mRemoteActivity");
+        }
+        if (mRemoteActivity == null) {
+            finish();
+            return;
+        }
         mRemoteActivity.onRestoreInstanceState(savedInstanceState);
         super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
+        if (mRemoteActivity == null) {
+            finish();
+            return;
+        }
         mRemoteActivity.onNewIntent(intent);
         super.onNewIntent(intent);
     }
 
     @Override
     public void onBackPressed() {
+        if (mRemoteActivity == null) {
+            finish();
+            return;
+        }
         mRemoteActivity.onBackPressed();
         super.onBackPressed();
     }
@@ -145,35 +200,59 @@ public class DLProxyActivity extends Activity implements DLAttachable {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
+        if (mRemoteActivity == null) {
+            finish();
+            return false;
+        }
         return mRemoteActivity.onTouchEvent(event);
     }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         super.onKeyUp(keyCode, event);
+        if (mRemoteActivity == null) {
+            finish();
+            return false;
+        }
         return mRemoteActivity.onKeyUp(keyCode, event);
     }
 
     @Override
     public void onWindowAttributesChanged(LayoutParams params) {
+        if (mRemoteActivity == null) {
+            finish();
+            return;
+        }
         mRemoteActivity.onWindowAttributesChanged(params);
         super.onWindowAttributesChanged(params);
     }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
+        if (mRemoteActivity == null) {
+            finish();
+            return;
+        }
         mRemoteActivity.onWindowFocusChanged(hasFocus);
         super.onWindowFocusChanged(hasFocus);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if (mRemoteActivity == null) {
+            finish();
+            return false;
+        }
         mRemoteActivity.onCreateOptionsMenu(menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (mRemoteActivity == null) {
+            finish();
+            return false;
+        }
         mRemoteActivity.onOptionsItemSelected(item);
         return super.onOptionsItemSelected(item);
     }

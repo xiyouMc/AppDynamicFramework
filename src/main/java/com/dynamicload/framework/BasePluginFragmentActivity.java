@@ -30,6 +30,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
@@ -62,6 +63,16 @@ public class BasePluginFragmentActivity extends FragmentActivity implements DLPl
     protected int mFrom = DLConstants.FROM_INTERNAL;
     protected DLPluginManager mPluginManager;
     protected DLPluginPackage mPluginPackage;
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
     @Override
     public void attach(Activity proxyActivity, DLPluginPackage pluginPackage) {

@@ -32,6 +32,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -67,6 +68,16 @@ public class BasePluginActivity extends Activity implements DLPlugin {
     protected DLPluginPackage mPluginPackage;
 
     protected int mFrom = DLConstants.FROM_INTERNAL;
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
+    }
 
     @Override
     public void attach(Activity proxyActivity, DLPluginPackage pluginPackage) {
