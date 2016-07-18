@@ -43,7 +43,7 @@ public class DLProxyActivity extends Activity implements DLAttachable {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (mRemoteActivity == null && savedInstanceState != null && savedInstanceState.containsKey()) {
+        if (mRemoteActivity == null && savedInstanceState != null && savedInstanceState.containsKey("mRemoteActivity")) {
             mRemoteActivity = savedInstanceState.getParcelable("mRemoteActivity");
         }
         impl.onCreate(getIntent());
