@@ -70,16 +70,6 @@ public class BasePluginActivity extends Activity implements DLPlugin {
     protected int mFrom = DLConstants.FROM_INTERNAL;
 
     @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
-
-    @Override
     public void attach(Activity proxyActivity, DLPluginPackage pluginPackage) {
         Log.d(TAG, "attach: proxyActivity= " + proxyActivity);
         mProxyActivity = (Activity) proxyActivity;

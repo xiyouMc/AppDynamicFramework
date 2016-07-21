@@ -22,14 +22,13 @@ import com.dynamicload.framework.dynamicload.internal.DLPluginPackage;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.WindowManager.LayoutParams;
 
-public interface DLPlugin extends Parcelable {
+public interface DLPlugin {
 
     public void onCreate(Bundle savedInstanceState);
 

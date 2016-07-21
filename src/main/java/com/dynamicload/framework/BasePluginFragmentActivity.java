@@ -65,16 +65,6 @@ public class BasePluginFragmentActivity extends FragmentActivity implements DLPl
     protected DLPluginPackage mPluginPackage;
 
     @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
     public void attach(Activity proxyActivity, DLPluginPackage pluginPackage) {
         Log.d(TAG, "attach: proxyActivity= " + proxyActivity);
         mProxyActivity = (FragmentActivity) proxyActivity;
