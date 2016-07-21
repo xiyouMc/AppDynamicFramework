@@ -48,7 +48,7 @@ public class MicroApplicationContextImpl implements MicroApplicationContext {
             //load lazy dex
             for (Map.Entry<String, Bundle> entry : FrameworkUtil.soPathMap.entrySet()) {
                 Bundle bundle = entry.getValue();
-                if (bundle.serviceName != null){
+                if (bundle.serviceName != null) {
                     for (String service : bundle.serviceName) {
                         if (interfaceName.endsWith(service)) {
                             FrameworkUtil.loadDexAndService(bundle.bundleName, bundle.soPath);
@@ -112,16 +112,25 @@ public class MicroApplicationContextImpl implements MicroApplicationContext {
         }
         //load class
         PackageInfo info = DLUtils.getPackageInfo(context, apkPath);
+        if (info == null) {
+            return null;
+        }
         return DLPluginManager.getInstance(context).getPackage(info.packageName);
     }
 
     public Resources getResourcesByBundle(String bundleName) {
         DLPluginPackage dlPluginPackage = getPluginPackageByBundle(bundleName);
+        if (dlPluginPackage == null) {
+            return null;
+        }
         return dlPluginPackage.resources;
     }
 
     public AssetManager getAssetsByBundle(String bundleName) {
         DLPluginPackage dlPluginPackage = getPluginPackageByBundle(bundleName);
+        if (dlPluginPackage == null){
+            return null;
+        }
         return dlPluginPackage.assetManager;
     }
 

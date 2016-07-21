@@ -32,6 +32,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;

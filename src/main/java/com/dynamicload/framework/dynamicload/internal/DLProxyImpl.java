@@ -119,6 +119,10 @@ public class DLProxyImpl {
 
         mPluginManager = DLPluginManager.getInstance(mProxyActivity);
         mPluginPackage = mPluginManager.getPackage(mPackageName);
+        if (mPluginPackage == null) {
+            Log.d(TAG, "classloader release;");
+            return;
+        }
         mAssetManager = mPluginPackage.assetManager;
         mResources = mPluginPackage.resources;
 

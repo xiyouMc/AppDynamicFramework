@@ -9,10 +9,23 @@ android {
         targetSdkVersion 22
     }
 
-    buildTypes {
+    //签名
+    signingConfigs {
         release {
-            debuggable false
+            storeFile file('bundle.keystore')
+            storePassword 'sheng.han'
+            keyAlias 'bundle'
+            keyPassword 'sheng.han'
+        }
+    }
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.release
+        }
+        release {
+            signingConfig signingConfigs.release
             minifyEnabled false
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -23,7 +36,7 @@ apply plugin: 'signing'
 
 //定义GroupID和Version，ArtefactID会自动使用Project名
 group = 'com.dynamicload.framework'
-version = '4.2.16074'
+version = '4.2.160721'
 
 artifacts {
     archives file('build/libs/' + project.name + '.jar')
@@ -65,7 +78,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.0'
+        classpath 'com.android.tools.build:gradle:2.1.2'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
