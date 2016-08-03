@@ -85,8 +85,8 @@
 
 例子：
 
-1、Api包的build.gradle模版
-2、core模块的例子
+1、Api包的[build.gradle模版](https://github.com/xiyouMc/AppDynamicFramework/blob/master/API.MD)
+2、Core包的 [build.gradle模版](https://github.com/xiyouMc/AppDynamicFramework/blob/master/CORE.MD)
 
 
 ## 三、依赖关系介绍
