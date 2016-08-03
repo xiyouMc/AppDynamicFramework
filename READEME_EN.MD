@@ -1,4 +1,4 @@
-The Framework depeny on [Dynamic-load-apk](https://github.com/singwhatiwanna/dynamic-load-apk). Add the way of dynamic load plugs and the inspect of bundle` service.
+The Framework depeny on [Dynamic-load-apk](https://github.com/singwhatiwanna/dynamic-load-apk). Add the way of dynamic load plugins and inspect bundle` service.
 
 Now ,This demo, On the basis of h5core and h5api
 
