@@ -5,24 +5,24 @@ import me.xiyoumc.framework.framework.api.MicroApplicationContext;
 /**
  * Created by android_mc on 16/5/4.
  */
-public class VivaApplication {
+public class MarkApplication {
 
-    private static VivaApplication mVivaApplication;
+    private static MarkApplication mMarkApplication;
 
     private static MicroApplicationContext mMicroApplicationContext;
 
-    private VivaApplication() {
+    private MarkApplication() {
     }
 
-    public static VivaApplication getInstance() {
-        if (mVivaApplication == null) {
-            synchronized (VivaApplication.class) {
-                if (mVivaApplication == null) {
-                    mVivaApplication = new VivaApplication();
+    public static MarkApplication getInstance() {
+        if (mMarkApplication == null) {
+            synchronized (MarkApplication.class) {
+                if (mMarkApplication == null) {
+                    mMarkApplication = new MarkApplication();
                 }
             }
         }
-        return mVivaApplication;
+        return mMarkApplication;
     }
 
     public synchronized MicroApplicationContext getMicroApplicationContext() {
