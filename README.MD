@@ -25,13 +25,13 @@
 
 ### 简介
 1. 开发模块时需要在  module(core)/package name/下定义Metainfo继承自BaseMateinfo。 这样该模块在主Apk安装的时候就会动态将模块的接口注入到框架，后续提供给其它组件调用。
-2. 模块提供的主要方法类有:BasePluginActivity,BasePluginFragmentActivity,BasePluginService,BaseMateinfo,VivaApplication.
+2. 模块提供的主要方法类有:BasePluginActivity,BasePluginFragmentActivity,BasePluginService,BaseMateinfo,MarkApplication.
 
 		BasePluginActivity: 基础的Activity，每一个模块中的Activity都需要继承该类，完成模块中的Activity的代理化。
 		BasePluginFragmentActivity： 基础的FragmentActivity，同上。需要继承该类
 		BasePluginService: 基础的Service，同上。
 		BaseMateinfo: 模块Service注入的基类，其它模块的Core层都需要定义一个Metainfo来继承该类，并完成Service的注入。（后面会介绍如何注入）
-		VivaApplication:模块的Application，可以拿到模块的Context，并提供查找Service，启动Activity等方法。
+		MarkApplication:模块的Application，可以拿到模块的Context，并提供查找Service，启动Activity等方法。
 
 
 ## 二、Activity层
@@ -60,10 +60,10 @@
    
 ### 模块之间依赖
 * 模块只要是通过Api包的依赖进行访问。由于Api是作为一个Jar存在的，因此可以直接被其它模块依赖，并切记使用 provided来依赖，防止Api的jar包被编译进模块。
-* 模块之间访问：主要的类有VivaApplication、MicroApplicationContext。
+* 模块之间访问：主要的类有MarkApplication、MicroApplicationContext。
 
 		比如其他模块访问Core:
-		XXService xxservice = VivaApplication.getInstance().getMicroApplicationContext().findServiceByInterface(XXService.class.getName());
+		XXService xxservice = MarkApplication.getInstance().getMicroApplicationContext().findServiceByInterface(XXService.class.getName());
 		这样就可以拿到容器的Service，从而调用其提供的方法。
   	
 ### 模块内部资源的访问
@@ -71,9 +71,9 @@
 
 		示例：
 		1、Resourse获取
-			VivaApplication.getInstance().getMicroApplicationContext().getResourcesByBundle("xxcore");  
+			MarkApplication.getInstance().getMicroApplicationContext().getResourcesByBundle("xxcore");
 		2、Assets获取
-			VivaApplication.getInstance().getMicroApplicationContext().getAssetsByBundle("xxcore");
+			MarkApplication.getInstance().getMicroApplicationContext().getAssetsByBundle("xxcore");
 			
 			
 			
