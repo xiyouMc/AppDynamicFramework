@@ -32,7 +32,7 @@ public class FrameworkUtil {
 
     private static final String TAG = "FrameworkUtil";
 
-    private static final String PROJECT_NAME = "vivavideo";
+    private static String PROJECT_NAME = "vivavideo";
     //key: H5Core(Module Name)  value: data/data/xxxxx/lib/libh5core.so
     public static Map<String, Bundle> soPathMap = new HashMap<String, Bundle>();
 
@@ -42,11 +42,22 @@ public class FrameworkUtil {
         return context;
     }
 
+    @Deprecated
+    /**
+     * U need use setConfig.
+     */
     public static void setContext(Context context) {
         FrameworkUtil.context = context;
+        Log.e(TAG, "Do u need setConfig?");
+    }
+
+    public static void setConfig(Context context, String projectName) {
+        setContext(context);
+        PROJECT_NAME = projectName;
     }
 
     public static void prepare() {
+
         prepareSoMap();
         //loadDex  without lazy
 
