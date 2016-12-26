@@ -8,7 +8,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
-import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
@@ -36,6 +35,8 @@ public class FrameworkUtil {
     //key: H5Core(Module Name)  value: data/data/xxxxx/lib/libh5core.so
     public static Map<String, Bundle> soPathMap = new HashMap<String, Bundle>();
 
+    public static Map<String, String> localBundleMap = new HashMap<>();
+
     private static Context context;
 
     public static Context getContext() {
@@ -54,6 +55,7 @@ public class FrameworkUtil {
     public static void setConfig(Context context, String projectName) {
         setContext(context);
         PROJECT_NAME = projectName;
+        Log.d(TAG, "projectName:" + projectName);
     }
 
     public static void prepare() {
@@ -136,8 +138,12 @@ public class FrameworkUtil {
     public static String getApkPathByBundleName(String bundleName) {
         Context context = FrameworkUtil.getContext();
         bundleName = "lib" + bundleName;
-        String apkRootPath = Environment.getExternalStorageDirectory().getPath() + "/" + PROJECT_NAME + "/" + context.getPackageName();
-        return apkRootPath + "/" + bundleName + ".apk";
+        String apkRootPath = context.getFilesDir().getPath();
+
+        apkRootPath = apkRootPath + "/" + bundleName + ".apk";
+        Log.d(TAG, "apkRootPath:" + apkRootPath);
+//                Environment.getExternalStorageDirectory().getPath() + "/" + PROJECT_NAME + "/" + context.getPackageName();
+        return apkRootPath;
     }
 
     private static void prepareSoMap() {
@@ -165,6 +171,32 @@ public class FrameworkUtil {
                     Bundle bundle = new Bundle.Builder().bundleName(lazyBundle[0]).lazy(true).serviceName(lazyBundle[1].split("&"))
                             .soPath(context.getFilesDir().getParent() + "/lib/lib" + lazyBundle[0] + ".so").build();
                     soPathMap.put(lazyBundle[0], bundle);
+                }
+            }
+
+            String localBundleName = pro.getProperty("localBundleName");
+            if (localBundleName != null && !localBundleName.isEmpty()) {
+                String[] localBundleNameArray = localBundleName.split(",");
+                for (String bundleName : localBundleNameArray) {
+                    //reflect Metainfo
+                    try {
+                        ClassLoader loader = FrameworkUtil.class.getClassLoader();
+                        Class localClass = loader.loadClass("com.vivavideo.mobile." + bundleName + ".MetaInfo");
+                        //construct instance
+                        Constructor localConstructor = localClass.getConstructor(new Class[]{});
+                        //register Bundle`s service.
+                        localConstructor.newInstance();
+                    } catch (IllegalAccessException e) {
+                        Log.e(TAG, "IllegalAccessException ", e);
+                    } catch (InstantiationException e) {
+                        Log.e(TAG, "InstantiationException ", e);
+                    } catch (ClassNotFoundException e) {
+                        Log.e(TAG, "ClassNotFoundException ", e);
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    } catch (NoSuchMethodException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         } catch (IOException e) {

@@ -1,8 +1,12 @@
 apply plugin: 'com.android.library'
 
+//需要根据业务需求进行配置
+String bundleVersion = '5.0'
+String bundlePackage = "com/dynamicload/framework"
+
 android {
     compileSdkVersion 22
-    buildToolsVersion "19.1.0"
+    buildToolsVersion "23.0.0"
 
     defaultConfig {
         minSdkVersion 8
@@ -36,7 +40,8 @@ apply plugin: 'signing'
 
 //定义GroupID和Version，ArtefactID会自动使用Project名
 group = 'com.dynamicload.framework'
-version = '4.2.160829'
+String output = new Date().format('yyyyMMddHHmmss')
+version = bundleVersion + '.' + output
 
 artifacts {
     archives file('build/libs/' + project.name + '.jar')
@@ -106,12 +111,12 @@ task buildJar(type: Jar) {
     //去除路径集下部分的资源
 //    exclude "org/chaos/demo/jar/MainActivity.class"
 //    exclude "org/chaos/demo/jar/MainActivity\$*.class"
-    exclude "com/dynamicload/framework/BuildConfig.class"
-    exclude "com/dynamicload/framework/BuildConfig\$*.class"
+    exclude bundlePackage + "/BuildConfig.class"
+    exclude bundlePackage + "/BuildConfig\$*.class"
     exclude "**/R.class"
     exclude "**/R\$*.class"
     //只导入资源路径集下的部分资源
-    include "com/dynamicload/framework/**/*.class"
+    include bundlePackage + "/**/*.class"
 
     //注: exclude include 支持可变长参数
 }

@@ -67,9 +67,9 @@ public class MicroApplicationContextImpl implements MicroApplicationContext {
         DLPluginManager dlPluginManager = DLPluginManager.getInstance(FrameworkUtil.getContext());
         DLPluginPackage dlPluginPackage = dlPluginManager.loadApk(apkRootPath);
 
-        DexClassLoader classLoader = dlPluginPackage.classLoader;
         Object object = null;
         try {
+            DexClassLoader classLoader = dlPluginPackage.classLoader;
             //load class
             Class localClass = classLoader.loadClass(className);
             //construct instance
@@ -85,6 +85,22 @@ public class MicroApplicationContextImpl implements MicroApplicationContext {
             e.printStackTrace();
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+        if (object == null) {
+            /**
+             * Local Bundle Name
+             */
+            try {
+                ClassLoader loader = MicroApplicationContextImpl.class.getClassLoader();
+                Class implClass = loader.loadClass(className);
+                Constructor metaInfoConStructor = implClass.getConstructor(new Class[]{});
+                object = metaInfoConStructor.newInstance();
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+
         }
 
         if (object == null) {
@@ -128,7 +144,7 @@ public class MicroApplicationContextImpl implements MicroApplicationContext {
 
     public AssetManager getAssetsByBundle(String bundleName) {
         DLPluginPackage dlPluginPackage = getPluginPackageByBundle(bundleName);
-        if (dlPluginPackage == null){
+        if (dlPluginPackage == null) {
             return null;
         }
         return dlPluginPackage.assetManager;
