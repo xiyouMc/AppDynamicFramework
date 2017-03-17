@@ -50,7 +50,7 @@ public class MicroApplicationContextImpl implements MicroApplicationContext {
                 Bundle bundle = entry.getValue();
                 if (bundle.serviceName != null) {
                     for (String service : bundle.serviceName) {
-                        if (interfaceName.endsWith(service)) {
+                        if (interfaceName.equals(service)) {
                             FrameworkUtil.loadDexAndService(bundle.bundleName, bundle.soPath);
                             return findServiceByInterface(interfaceName);
                         }

@@ -34,6 +34,7 @@ public class FrameworkUtil {
     private static String PROJECT_NAME = "vivavideo";
     //key: H5Core(Module Name)  value: data/data/xxxxx/lib/libh5core.so
     public static Map<String, Bundle> soPathMap = new HashMap<String, Bundle>();
+    private static String PACKAGE_NAME = "com.vivavideo.mobile";
 
     public static Map<String, String> localBundleMap = new HashMap<>();
 
@@ -50,6 +51,10 @@ public class FrameworkUtil {
     public static void setContext(Context context) {
         FrameworkUtil.context = context;
         Log.e(TAG, "Do u need setConfig?");
+    }
+
+    public static void setPackageName( String packageName) {
+        PACKAGE_NAME = packageName;
     }
 
     public static void setConfig(Context context, String projectName) {
@@ -181,7 +186,7 @@ public class FrameworkUtil {
                     //reflect Metainfo
                     try {
                         ClassLoader loader = FrameworkUtil.class.getClassLoader();
-                        Class localClass = loader.loadClass("com.vivavideo.mobile." + bundleName + ".MetaInfo");
+                        Class localClass = loader.loadClass(PACKAGE_NAME + "." + bundleName + ".MetaInfo");
                         //construct instance
                         Constructor localConstructor = localClass.getConstructor(new Class[]{});
                         //register Bundle`s service.
@@ -215,6 +220,7 @@ public class FrameworkUtil {
         DLPluginPackage dlPluginPackage = DLPluginManager.getInstance(context).loadApk(apkRootPath);
         Log.d(TAG, "loadApk:" + (System.currentTimeMillis() - timeStart));
         DexClassLoader classLoader = dlPluginPackage.classLoader;
+
         try {
             //load class
             PackageInfo info = dlPluginPackage.packageInfo; //DLUtils.getPackageInfo(context, apkRootPath);
